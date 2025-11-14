@@ -8,7 +8,7 @@ namespace PersonalFinanceTracker.Models.DTOs
 
         // Amount can be positive (income/deposit) or negative (expense/withdrawal).
         [Required]
-        [Range(0.01, 1000000000, ErrorMessage = "Amount must be greater than zero.")]
+        [Range(-1000000000, 1000000000, ErrorMessage = "Amount is out of range.")]
         public decimal Amount { get; set; }
 
         [Required]

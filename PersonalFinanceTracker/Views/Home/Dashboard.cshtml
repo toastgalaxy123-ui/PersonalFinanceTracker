@@ -1,0 +1,140 @@
+﻿@* Views/Home/Dashboard.cshtml *@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container mt-5">
+    <h1>Welcome to Your Financial Dashboard</h1>
+    <p>Authentication successful. Token is stored locally.</p>
+
+    <div id="authCheck" class="alert alert-info">Checking authorization...</div>
+
+    <button id="logoutButton" class="btn btn-warning mb-4">Logout</button>
+
+    <h3 class="mt-4">Your Accounts</h3>
+    <div id="accountError" class="text-danger"></div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Initial Balance</th>
+                <th>Current Balance</th>
+            </tr>
+        </thead>
+        <tbody id="accountsTableBody">
+            <tr><td colspan="5">Loading accounts...</td></tr>
+        </tbody>
+    </table>
+
+    <h3 class="mt-4">Your Categories</h3>
+    <button id="fetchCategoriesButton" class="btn btn-info btn-sm mb-3">Fetch Categories</button>
+    <ul id="categoriesList" class="list-group">
+        <li class="list-group-item">Click the button to load categories.</li>
+    </ul>
+</div>
+
+@section Scripts {
+    <script>
+        // Global function to fetch data from a protected API endpoint
+        async function fetchSecuredData(endpoint) {
+            const token = localStorage.getItem('authToken');
+
+            if (!token) {
+                document.getElementById('authCheck').textContent = 'ERROR: No token found. Redirecting to login...';
+                setTimeout(() => window.location.href = '/Home/Index', 1000);
+                return null;
+            }
+
+            const response = await fetch(endpoint, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Key to security!
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 401) {
+                document.getElementById('authCheck').textContent = 'Authorization failed. Token expired or invalid. Redirecting...';
+                localStorage.removeItem('authToken');
+                setTimeout(() => window.location.href = '/Home/Index', 1000);
+                return null;
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || `Failed to fetch data. Status: ${response.status}`);
+            }
+
+            return response.json();
+        }
+
+        // 1. Load Accounts on page load
+        async function loadAccounts() {
+            try {
+                const accounts = await fetchSecuredData('/api/Accounts');
+                if (!accounts) return; // Stop if fetchSecuredData already handled redirect
+
+                const tableBody = document.getElementById('accountsTableBody');
+                tableBody.innerHTML = '';
+
+                if (accounts.length > 0) {
+                    accounts.forEach(account => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).textContent = account.id;
+                        row.insertCell(1).textContent = account.name;
+                        row.insertCell(2).textContent = account.type;
+                        row.insertCell(3).textContent = `$${account.initialBalance.toFixed(2)}`;
+                        row.insertCell(4).textContent = `$${account.currentBalance.toFixed(2)}`;
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="5">No accounts found.</td></tr>';
+                }
+                document.getElementById('authCheck').className = 'alert alert-success';
+                document.getElementById('authCheck').textContent = 'Authorization check successful.';
+
+            } catch (error) {
+                document.getElementById('accountError').textContent = 'Error loading accounts: ' + error.message;
+            }
+        }
+
+        // 2. Load Categories (on button click)
+        async function loadCategories() {
+            try {
+                const categories = await fetchSecuredData('/api/Categories');
+                if (!categories) return;
+
+                const list = document.getElementById('categoriesList');
+                list.innerHTML = '';
+
+                if (categories.length > 0) {
+                    categories.forEach(cat => {
+                        const item = document.createElement('li');
+                        item.className = 'list-group-item';
+                        const type = cat.isExpense ? ' (Expense)' : ' (Income)';
+                        item.textContent = `${cat.name} (ID: ${cat.id}) ${type}`;
+                        list.appendChild(item);
+                    });
+                } else {
+                    list.innerHTML = '<li class="list-group-item text-muted">No categories found.</li>';
+                }
+            } catch (error) {
+                alert('Failed to load categories: ' + error.message);
+            }
+        }
+
+        // 3. Logout
+        function handleLogout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '/Home/Index';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fetchCategoriesButton').addEventListener('click', loadCategories);
+            document.getElementById('logoutButton').addEventListener('click', handleLogout);
+            loadAccounts();
+        });
+    </script>
+}
