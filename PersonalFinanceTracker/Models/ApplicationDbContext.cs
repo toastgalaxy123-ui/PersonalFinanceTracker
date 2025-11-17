@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-﻿namespace PersonalFinanceTracker.Models
-{
-    public class DbContext
-    {
-    }
-=======
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using PersonalFinanceTracker.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,8 +52,7 @@ namespace PersonalFinanceTracker.Models
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        
+
     }
 
->>>>>>> origin/main
 }

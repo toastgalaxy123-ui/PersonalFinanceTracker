@@ -1,17 +1,11 @@
-<<<<<<< HEAD
-﻿namespace PersonalFinanceTracker.Models
-{
-    public class Transaction
-    {
-=======
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PersonalFinanceTracker.Models
 {
     public class Transaction
     {
         public int Id { get; set; }
-        public DateTime Date  { get; set; }
+        public DateTime Date { get; set; }
         public decimal Amount { get; set; }//Positive for income, negative for expense
         public string Description { get; set; }
         public string Notes { get; set; }
@@ -29,6 +23,5 @@ namespace PersonalFinanceTracker.Models
         public Category Category { get; set; }
 
 
->>>>>>> origin/main
     }
 }

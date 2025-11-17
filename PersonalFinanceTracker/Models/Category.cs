@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-﻿namespace PersonalFinanceTracker.Models
-{
-    public class Category
-    {
-=======
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PersonalFinanceTracker.Models
 {
@@ -23,6 +17,5 @@ namespace PersonalFinanceTracker.Models
 
         //Navigation to the transactions in this category
         public ICollection<Transaction> Transactions { get; set; }
->>>>>>> origin/main
     }
 }

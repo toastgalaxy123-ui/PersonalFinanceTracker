@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-﻿namespace PersonalFinanceTracker.Models
-{
-    public class Account
-    {
-=======
-﻿using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore.SqlServer;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace PersonalFinanceTracker.Models
 
@@ -28,6 +22,5 @@ namespace PersonalFinanceTracker.Models
         //Navigation property for transactions associated with this account
         public ICollection<Transaction> Transactions { get; set; }
 
->>>>>>> origin/main
     }
 }
